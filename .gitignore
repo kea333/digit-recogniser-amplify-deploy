@@ -43,3 +43,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# --- Jupyter notebook checkpoints ---
+.ipynb_checkpoints/
