@@ -1,0 +1,45 @@
+# --- Operating System Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# --- Text Editor / IDE Settings ---
+.vscode/
+.idea/
+*.swp
+*.bak
+*.tmp
+
+# --- Build & Dependency Folders ---
+# (for later npm or static site generator)
+node_modules/
+dist/
+build/
+.cache/
+
+# --- Logs & Debugging ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Python Environment ---
+.venv/
+venv/
+ENV/
+env/
+bin/
+lib/
+include/
+share/
+
+# --- Python Cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

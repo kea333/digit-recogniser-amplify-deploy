@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: MNIST Digit Recognizer — Lambda backend with API Gateway
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+  Api:
+    Cors:
+      AllowMethods: "'OPTIONS,POST,GET'"
+      AllowHeaders: "'Content-Type'"
+      AllowOrigin: "'*'"
+
+Resources:
+  MnistPredictFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: mnist-digit-recognizer
+      Description: Flask app serving MNIST predictions
+      CodeUri: backend/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Architectures:
+        - x86_64
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+        Predict:
+          Type: Api
+          Properties:
+            Path: /predict
+            Method: post
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
