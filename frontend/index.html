@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Digit Recogniser</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Kweku's Handwritten Digit Recogniser App</h1>
+        <p class="subtitle">Draw a digit (with your mouse) or upload a handwritten image.<br>
+                            Remember to 'Clear' prediction before further draw or upload.</p>
+
+        <!-- -- API Configuration ------------------------------------- -->
+        <div class="api-config">
+            <label for="apiUrlInput">API Endpoint:</label>
+            <input type="text" id="apiUrlInput"
+                   placeholder="https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/Prod" />
+        </div>
+
+        <!-- -- Mode Toggle ------------------------------------------- -->
+        <div class="mode-toggle">
+            <button id="modeDrawBtn" class="toggle-btn active">✏️ Draw</button>
+            <button id="modeUploadBtn" class="toggle-btn">📁 Upload Image</button>
+        </div>
+
+        <div class="main-area">
+            <!-- -- Input Section ------------------------------------- -->
+            <div class="input-section">
+                <!-- Draw mode -->
+                <div id="drawMode" class="mode-panel active">
+                    <canvas id="canvas" width="280" height="280"></canvas>
+                    <div class="button-row">
+                        <button id="clearBtn" class="btn btn-clear">Clear</button>
+                        <button id="predictDrawBtn" class="btn btn-predict">Predict</button>
+                    </div>
+                </div>
+
+                <!-- Upload mode -->
+                <div id="uploadMode" class="mode-panel">
+                    <label for="fileInput" class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <span class="upload-icon">📤</span>
+                            <span>Click to upload or drag an image here</span>
+                            <span class="upload-hint">JPG or PNG — any size</span>
+                        </div>
+                        <img id="imagePreview" class="image-preview hidden" alt="Preview" />
+                        <input type="file" id="fileInput" accept="image/png, image/jpeg" hidden />
+                    </label>
+                    <div class="button-row">
+                        <button id="clearUploadBtn" class="btn btn-clear">Clear</button>
+                        <button id="predictUploadBtn" class="btn btn-predict">Predict</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- -- Result Section ------------------------------------ -->
+            <div class="result-section">
+                <div class="prediction-box">
+                    <span class="label">Prediction</span>
+                    <span id="predictionResult" class="digit">?</span>
+                </div>
+                <div class="confidence-bars" id="confidenceBars"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
