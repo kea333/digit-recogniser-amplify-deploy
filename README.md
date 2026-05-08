@@ -15,10 +15,10 @@ The neural network (NN) model itself is an adapted and customised scikit-learn i
 
 This deployment provides added functionalities where, in addition to uploading a handwritten image (as jpeg or png) for identification, users can also _**draw**_ a digit on an on-screen canvas using a mouse or touch interface, and simply click "Predict" to run it and obtain a classification (i.e. identification, inference) with percentage probability (confidence) of digit class.
 
-## Architecture on AWS
+## Project Architecture
 
 ```
-Browser Frontend (S3/Amplify Hosting)  →  API Gateway  →  Lambda Backend (Flask + scikit-learn)
+Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + scikit-learn / Joblib)
 ```
 <br>
 
@@ -31,22 +31,25 @@ graph LR
 
     subgraph AWS_Cloud [AWS Cloud]
         subgraph Frontend_Hosting [Frontend Hosting]
-            B[fa:fa-th-large S3 / Amplify Hosting]
+            B[fa:fa-th-large Amplify Hosting]
         end
 
         subgraph Backend_Services [Serverless Backend]
             C[fa:fa-door-open API Gateway]
-            D[fa:fa-microchip Lambda Function <br/> Flask + scikit-learn]
+            D[fa:fa-microchip Lambda Function <br/> Flask + MLP Model]
         end
     end
 
-    A --> B
-    A -- REST API Call --> C
+    %% Connection Logic
+    A -- "REST API Call" --> B
+    B --> C
     C --> D
+    D --> A
 
-    style AWS_Cloud fill:#f9f9f9,stroke:#232f3e,stroke-width:2px
-    style Frontend_Hosting fill:#fff,stroke:#3b48cc,stroke-dasharray: 5 5
-    style Backend_Services fill:#fff,stroke:#3b48cc,stroke-dasharray: 5 5
+    %% Styling with no background fills
+    style AWS_Cloud fill:none,stroke:#232f3e,stroke-width:2px
+    style Frontend_Hosting fill:none,stroke:#3b48cc,stroke-dasharray: 5 5
+    style Backend_Services fill:none,stroke:#3b48cc,stroke-dasharray: 5 5
 
 ```
 <br>
