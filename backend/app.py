@@ -62,6 +62,10 @@ def predict():
       • Multipart form-data with file field named "file"   (upload mode)
     """
     try:
+        # Reject oversized payloads (2MB limit)
+        if request.content_length and request.content_length > 2 * 1024 * 1024:
+            return jsonify({"error": "Payload too large. Maximum size is 2MB."}), 413
+
         if "file" in request.files:
             file = request.files["file"]
             if file.filename == "":
