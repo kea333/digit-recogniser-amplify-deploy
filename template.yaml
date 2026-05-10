@@ -11,6 +11,11 @@ Globals:
       AllowMethods: "'OPTIONS,POST,GET'"
       AllowHeaders: "'Content-Type'"
       AllowOrigin: "'https://main.d28bhzqcmfxh8w.amplifyapp.com'"
+    MethodSettings:
+      - ResourcePath: '/*'
+        HttpMethod: '*'
+        ThrottlingRateLimit: 10
+        ThrottlingBurstLimit: 20
 
 Resources:
   MnistPredictFunction:
