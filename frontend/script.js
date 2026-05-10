@@ -4,7 +4,7 @@
 const apiUrlInput = document.getElementById("apiUrlInput");
 
 // Try loading a saved URL from localStorage
-apiUrlInput.value = localStorage.getItem("apiUrl") || "";
+apiUrlInput.value = localStorage.getItem("apiUrl") || "https://mliw6mw8fe.execute-api.us-east-1.amazonaws.com/Prod";
 apiUrlInput.addEventListener("change", () => {
     localStorage.setItem("apiUrl", apiUrlInput.value.replace(/\/+$/, ""));
 });
