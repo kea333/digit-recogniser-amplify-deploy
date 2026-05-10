@@ -20,7 +20,7 @@ Resources:
       Description: Flask app serving MNIST predictions
       CodeUri: backend/
       Handler: app.lambda_handler
-      Runtime: python3.11
+      Runtime: python3.13
       Architectures:
         - x86_64
       Events:
