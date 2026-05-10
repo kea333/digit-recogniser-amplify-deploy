@@ -10,7 +10,7 @@ Globals:
     Cors:
       AllowMethods: "'OPTIONS,POST,GET'"
       AllowHeaders: "'Content-Type'"
-      AllowOrigin: "'*'"
+      AllowOrigin: "'https://main.d28bhzqcmfxh8w.amplifyapp.com'"
 
 Resources:
   MnistPredictFunction:
@@ -23,6 +23,7 @@ Resources:
       Runtime: python3.13
       Architectures:
         - x86_64
+      ReservedConcurrentExecutions: 10
       Events:
         HealthCheck:
           Type: Api
