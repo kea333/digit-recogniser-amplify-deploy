@@ -1,21 +1,10 @@
 // =====================================================================
-//  API base URL — user pastes their API Gateway endpoint here
+//  API base URL — hardcoded (not exposed in UI)
 // =====================================================================
-const apiUrlInput = document.getElementById("apiUrlInput");
-
-// Try loading a saved URL from localStorage
-apiUrlInput.value = localStorage.getItem("apiUrl") || "https://mliw6mw8fe.execute-api.us-east-1.amazonaws.com/Prod";
-apiUrlInput.addEventListener("change", () => {
-    localStorage.setItem("apiUrl", apiUrlInput.value.replace(/\/+$/, ""));
-});
+const API_URL = "https://mliw6mw8fe.execute-api.us-east-1.amazonaws.com/Prod";
 
 function getApiUrl() {
-    const url = apiUrlInput.value.replace(/\/+$/, "");
-    if (!url) {
-        alert("Please enter your API Gateway endpoint URL at the top of the page.");
-        return null;
-    }
-    return url;
+    return API_URL;
 }
 
 // =====================================================================
