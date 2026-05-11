@@ -64,6 +64,6 @@ Enjoy further details by checking out:
   2. [App on Demonstration](https://main.d28bhzqcmfxh8w.amplifyapp.com/)<br>
      In addition to uploading digit images for inference, you may also draw digits here.<br>
      
-  3. [My other Project's Portfolio](https://webint.tech/)
+  3. [My other Project's Portfolio](https://webint.tech/)<br>
      Under construction - coming soon !
   
