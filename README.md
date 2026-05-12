@@ -9,15 +9,14 @@
 
 ## Welcome to my Digit Recogniser App repository !
 
-This repo contains the source code and deployment configurations for a web app that performs real-time handwritten digit recognition, deployed via AWS Amplify. It utilises a backend serverless architecture of AWS Lambda with a Flask-based API handled by a Lambda adapter, together with Joblib serialisation of a trained scikit-learn MLP model.
-<br>
-The neural network (NN) model itself is an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data.
-<br>
+This repo contains the source code and deployment configurations for a web app that performs real-time handwritten digit recognition, deployed via AWS Amplify. It utilises a backend serverless architecture of AWS Lambda with a Flask-based API handled by a Lambda adapter, together with Joblib serialisation of a trained scikit-learn MLP model.<br>
+
+The neural network (NN) model itself is an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data.<br>
+
 This deployment provides added functionalities:<br>
 * Interactive Canvas: Draw digits directly using a mouse or touch interface.
 * Image Upload: Classify handwritten digits from uploaded JPEG/PNG files.
-* Inference Results: Obtain a digit classification along with its confidence percentage.
-<br>
+* Inference Results: Obtain a digit classification along with its confidence percentage.<br>
 
 ## Project Architecture
 
