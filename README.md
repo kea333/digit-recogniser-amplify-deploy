@@ -22,11 +22,11 @@ This deployment provides added functionalities:<br>
 ## Project Architecture
 
 ```
-Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + scikit-learn / Joblib)
+Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + NN Joblib)
 ```
 <br>
 
-<img width="1416" height="694" alt="HDC Architecture" src="https://github.com/user-attachments/assets/ed8ff2cd-bb08-4f90-8895-5a92673955a2" />
+<img width="1480" height="770" alt="hdc app architecture" src="https://github.com/user-attachments/assets/7d23a1f4-fea0-4ea3-90d7-74c8b626adbe" />
 
 <br>
 
@@ -64,6 +64,6 @@ Enjoy further details by checking out:
   2. [App on Demonstration](https://main.d28bhzqcmfxh8w.amplifyapp.com/)<br>
      In addition to uploading digit images for inference, you may also draw digits here.<br>
      
-  3. [My other Project's Portfolio](https://webint.tech/)<br>
+  3. [My other Projects Portfolio](https://webint.tech/)<br>
      Under construction - coming soon !
   
