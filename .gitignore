@@ -45,4 +45,4 @@ __pycache__/
 *.pyd
 
 # --- Jupyter notebook checkpoints ---
-.ipynb_checkpoints/
+.ipynb_checkpoints/*.pth

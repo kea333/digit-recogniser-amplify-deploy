@@ -1,26 +1,31 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: MNIST Digit Recognizer — Lambda backend with API Gateway
+Description: MNIST Digit Recognizer — Lambda backend with API Gateway (CNN/ONNX)
 
 Globals:
   Function:
     Timeout: 30
-    MemorySize: 512
+    MemorySize: 1024        # Increased from 512 — ONNX Runtime needs more headroom
   Api:
     Cors:
       AllowMethods: "'OPTIONS,POST,GET'"
       AllowHeaders: "'Content-Type'"
-      AllowOrigin: "'*'"
+      AllowOrigin: "'https://main.d28bhzqcmfxh8w.amplifyapp.com'"
+    MethodSettings:
+      - ResourcePath: '/*'
+        HttpMethod: '*'
+        ThrottlingRateLimit: 10
+        ThrottlingBurstLimit: 20
 
 Resources:
   MnistPredictFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: mnist-digit-recognizer
-      Description: Flask app serving MNIST predictions
+      Description: Flask app serving MNIST CNN predictions via ONNX Runtime
       CodeUri: backend/
       Handler: app.lambda_handler
-      Runtime: python3.11
+      Runtime: python3.13
       Architectures:
         - x86_64
       Events:
