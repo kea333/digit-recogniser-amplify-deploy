@@ -1,7 +1,7 @@
 // =====================================================================
 //  API base URL — hardcoded (not exposed in UI)
 // =====================================================================
-const API_URL = "https://mliw6mw8fe.execute-api.us-east-1.amazonaws.com/Prod";
+const API_URL = "https://v6e5a2x3w4.execute-api.us-east-1.amazonaws.com/Prod";
 
 function getApiUrl() {
     return API_URL;
