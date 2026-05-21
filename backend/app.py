@@ -8,6 +8,7 @@ PyTorch CNN exported to ONNX, served via onnxruntime.
 import io
 import os
 import base64
+import logging
 
 import numpy as np
 import onnxruntime as ort
@@ -17,12 +18,15 @@ from flask_cors import CORS
 
 from preprocess import preprocess_image
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 # ── Initialise Flask ─────────────────────────────────────────────────────
 app = Flask(__name__)
-CORS(app)  # Allow cross-origin requests from the Amplify-hosted frontend
+CORS(app, origins=["https://main.d28bhzqcmfxh8w.amplifyapp.com"])  # Restrict to Amplify frontend only
 
 # ── Load ONNX model once (persists across warm Lambda invocations) ────────
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "my_cnn_model.onnx")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "mnist_cnn.onnx")
 
 sess_options = ort.SessionOptions()
 sess_options.intra_op_num_threads = 1   # Lambda is single-threaded
@@ -38,6 +42,9 @@ INPUT_NAME  = ort_session.get_inputs()[0].name    # "input"
 OUTPUT_NAME = ort_session.get_outputs()[0].name   # "output"
 
 print(f"ONNX model loaded. Input: '{INPUT_NAME}', Output: '{OUTPUT_NAME}'")
+
+ALLOWED_MIME_TYPES = {"image/png", "image/jpeg", "image/gif", "image/webp"}
+MAX_BASE64_LEN = 3 * 1024 * 1024  # ~2 MB decoded
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────
@@ -83,18 +90,23 @@ def predict():
             file = request.files["file"]
             if file.filename == "":
                 return jsonify({"error": "No file selected"}), 400
+            if file.content_type not in ALLOWED_MIME_TYPES:
+                return jsonify({"error": "Invalid file type. Allowed: PNG, JPEG, GIF, WebP."}), 415
             image = Image.open(file.stream)
         else:
             data = request.get_json(silent=True)
             if not data or "image" not in data:
                 return jsonify({"error": "No image data provided"}), 400
+            if len(data["image"]) > MAX_BASE64_LEN:
+                return jsonify({"error": "Image data too large."}), 413
             image = decode_base64_image(data["image"])
 
         processed = preprocess_image(image)   # → (1,1,28,28) float32
         return jsonify(build_response(processed))
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        logger.exception("Unhandled error in /predict")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 # ── Lambda handler (apig-wsgi bridges API Gateway → Flask) ───────────────
@@ -105,4 +117,4 @@ except ImportError:
     lambda_handler = None  # Running locally
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)

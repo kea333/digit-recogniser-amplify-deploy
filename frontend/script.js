@@ -1,10 +1,23 @@
 // =====================================================================
-//  API base URL — hardcoded (not exposed in UI)
+//  API base URL — points to /api prefix, proxied via Amplify rewrite
 // =====================================================================
-const API_URL = "https://v6e5a2x3w4.execute-api.us-east-1.amazonaws.com/Prod";
+const API_URL = "/api";
 
 function getApiUrl() {
     return API_URL;
+}
+
+// =====================================================================
+//  Allowed image MIME types
+// =====================================================================
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
+function validateFile(file) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+        alert("Invalid file type. Please upload a PNG, JPEG, GIF, or WebP image.");
+        return false;
+    }
+    return true;
 }
 
 // =====================================================================
@@ -80,7 +93,7 @@ function renderBars(confidence) {
             <div class="bar-row">
                 <span class="bar-label">${i}</span>
                 <div class="bar-track">
-                    <div class="bar-fill ${isTop ? "highlight" : ""}"
+                    <div class="bar-fill ${isTop ? "highlight" : ``}"
                          style="width: ${pct}%"></div>
                 </div>
                 <span class="bar-value">${pct.toFixed(1)}%</span>
@@ -191,7 +204,10 @@ function clearUpload() {
 }
 
 fileInput.addEventListener("change", (e) => {
-    if (e.target.files.length > 0) showPreview(e.target.files[0]);
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        if (validateFile(file)) showPreview(file);
+    }
 });
 
 uploadArea.addEventListener("dragover", (e) => {
@@ -204,7 +220,10 @@ uploadArea.addEventListener("dragleave", () => {
 uploadArea.addEventListener("drop", (e) => {
     e.preventDefault();
     uploadArea.classList.remove("drag-over");
-    if (e.dataTransfer.files.length > 0) showPreview(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        if (validateFile(file)) showPreview(file);
+    }
 });
 
 clearUploadBtn.addEventListener("click", clearUpload);
