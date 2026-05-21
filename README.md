@@ -9,49 +9,24 @@
 
 ## Welcome to my Digit Recogniser App repository !
 
-This repo contains the source code and deployment configurations for a web app that performs real-time handwritten digit recognition, deployed via AWS Amplify. It utilises a backend serverless architecture of AWS Lambda with a Flask-based API handled by a Lambda adapter, together with Joblib serialisation of the trained scikit-learn MLP model.
+This repo contains the source code and deployment configurations for a web app that performs real-time handwritten digit recognition, deployed via AWS Amplify. It utilises a backend serverless architecture of AWS Lambda with a Flask-based API handled by a Lambda adapter, together with Joblib serialisation of a trained scikit-learn MLP model.<br>
 
-The neural network (NN) model itself is an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data.
+The neural network (NN) model itself is an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data.<br>
 
-This deployment provides added functionalities where, in addition to uploading a handwritten image (as jpeg or png) for identification, users can also _**draw**_ a digit on an on-screen canvas using a mouse or touch interface, and simply click "Predict" to run it and obtain a classification (i.e. identification, inference) with percentage probability (confidence) of digit class.
+This deployment provides added functionalities:<br>
+* Interactive Canvas: Draw digits directly using a mouse or touch interface.
+* Image Upload: Classify handwritten digits from uploaded JPEG/PNG files.
+* Inference Results: Obtain a digit classification along with its confidence percentage.<br>
 
 ## Project Architecture
 
 ```
-Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + scikit-learn / Joblib)
+Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + NN Joblib)
 ```
 <br>
 
-```mermaid
+<img width="1480" height="770" alt="hdc app architecture" src="https://github.com/user-attachments/assets/7d23a1f4-fea0-4ea3-90d7-74c8b626adbe" />
 
-graph LR
-    subgraph Client_Side [User Interface]
-        A[fa:fa-globe Browser]
-    end
-
-    subgraph AWS_Cloud [AWS Cloud]
-        subgraph Frontend_Hosting [Frontend Hosting]
-            B[fa:fa-th-large Amplify Hosting]
-        end
-
-        subgraph Backend_Services [Serverless Backend]
-            C[fa:fa-door-open API Gateway]
-            D[fa:fa-microchip Lambda Function <br/> Flask + MLP Model]
-        end
-    end
-
-    %% Connection Logic
-    A -- "REST API Call" --> B
-    B --> C
-    C --> D
-    D --> A
-
-    %% Styling with no background fills
-    style AWS_Cloud fill:none,stroke:#232f3e,stroke-width:2px
-    style Frontend_Hosting fill:none,stroke:#3b48cc,stroke-dasharray: 5 5
-    style Backend_Services fill:none,stroke:#3b48cc,stroke-dasharray: 5 5
-
-```
 <br>
 
 ## Project Structure
@@ -77,9 +52,17 @@ digit-recogniser-amplify-deploy/
 └── template.yaml                         # AWS SAM template to deploy Lambda + API Gateway
 
 ```
-
 <br>
 
-For details of this adapted and customised NN model, and a step-by-step guide through my implementation, please refer to the Python notebook _**Digit_Classifier_ML_Model**_ in this repo. You may also run the notebook in your local Jupyter environment, where you may upload handwritten digit images for inference, or head to <placeholderURL> where you can also _draw_ digits for identification.
+Enjoy further details by checking out:
 
-#### Enjoy !
+  1. [Neural Network Model for this App](https://github.com/kea333/digit-recogniser-amplify-deploy/blob/main/Digit_Classifier_ML_Model.ipynb)<br>
+     A step-by-step guide through my adapted and customised implementation, and the same as the Python notebook _**Digit_Classifier_ML_Model**_  above in this repo.<br>
+     You may also run the notebook in your local Jupyter environment, where you may upload handwritten digit images for inference.<br>
+     
+  2. [App on Demonstration](https://main.d28bhzqcmfxh8w.amplifyapp.com/)<br>
+     In addition to uploading digit images for inference, you may also draw digits here.<br>
+     
+  3. [My other Projects Portfolio](https://webint.tech/)<br>
+     Under construction - coming soon !
+  
