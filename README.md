@@ -38,7 +38,7 @@ Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backe
 
 ## Project Architecture (updated)
 
-![Project Architecture](hdc-architecture-updated.svg)
+![Project Architecture](hdc-architecture-updated.png)
 
 <br>
 
