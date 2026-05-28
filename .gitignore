@@ -48,4 +48,4 @@ __pycache__/
 .ipynb_checkpoints/
 
 # --- .pth weight files ---
-*.pth
+*.pthsamconfig.toml
