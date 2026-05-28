@@ -10,10 +10,20 @@
 ## Welcome to my Digit Recogniser App repository !
 
 This repo contains the source code and deployment configurations for a web app that performs real-time handwritten digit recognition deployed via AWS Amplify. It utilises a backend serverless architecture of AWS Lambda with a Flask-based API handled by a Lambda adapter, together with ONNX Runtime execution of a trained PyTorch CNN model exported to ONNX format.<br>
+<br>
 
-The original neural network (NN) model itself was an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data. Deployment in the wild exposed a weakness that was not apparent during validation and testing: persistent misidentification of the digits 7 and 9 as 3. Probable reasons: an MLP model trained on raw pixels exhibiting spatial blindness i.e. the model treats every pixel as an independent feature based strictly on its grid coordinate (x, y), and has no concept of spatial relationships or shapes.<br>
+The original neural network (NN) model used in this mini-project was an adapted and customised scikit-learn implementation of my previous (July 2022) _**modified**_ Python TensorFlow version, and trained on the popular MNIST data. Live validation and testing revealed a serious flaw in this particular model: persistent misidentification of the digits 7 and 9 as 3.<br>
 
-**Resolution:** Refactor, reconfigure, and redeploy. Still using the MNIST dataset, a PyTorch implementation of a convolutional neural network (CNN) was carried out, and further improved with data augmentation and transformations. The result now is a satisfactorily performing app without performance issues.
+**Probable reason:** an MLP model trained on raw pixels may simply not be sophisticated enough, and is exhibiting spatial blindness i.e. the model treats every pixel as an independent feature based strictly on its grid coordinate (x, y), and has no concept of spatial relationships or shapes.<br>
+
+**Resolution Strategy:** Change model learning with architecture. Still using the MNIST dataset, a PyTorch implementation of a convolutional neural network (CNN) was carried out, and further improved with data augmentation and transformations.<br>
+
+An MLP flattens an image into a 1D vector, destroying all 2D pixel relationships and treating adjacent pixels no differently than distant ones. A CNN uses moving filters (kernels) to scan local pixel patches. This architecture forces the model to capture proximity-based visual patterns like edges and shapes regardless of where they appear in the frame. Consequently, the CNN preserves spatial context using far fewer parameters, whereas an MLP blindly attempts to learn separate, independent weights for every single pixel coordinate.<br>
+
+PyTorch specifically enables this spatial advantage through its highly optimised _nn.Conv2d_ layers, which execute these sliding-filter calculations far more efficiently on a CPU than scikit-learn's dense matrix operations. So even without a GPU, PyTorch's dynamic graph architecture allows easy stacking and customisation these convolutional layers to extract deep spatial features without running into the massive memory overhead of a flattened MLP.<br>
+
+The result now is a satisfactorily performing app without performance issues.<br>
+<br>
 
 Application functionalities:<br>
 * Image Upload: Classify handwritten digits from uploaded JPEG/PNG files.
@@ -22,13 +32,15 @@ Application functionalities:<br>
 
 ## Architecture Description
 
-1. Original scikit-learn MLP model:
+1.<br>
+Original scikit-learn MLP model:
 
 ```
 Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + Lambda Adapter + NN Joblib)
 ```
 
-2. Updated PyTorch CNN model:
+2.<br>
+Updated PyTorch CNN model:
 
 ```
 Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backend (Flask + ONNX Runtime + CNN ONNX Model)
@@ -47,43 +59,50 @@ Browser → Frontend → AWS Amplify (Hosting + API Management) → Lambda Backe
 ```text
 
 digit-recogniser-amplify-deploy/
-├── template.yaml                  # SAM/CloudFormation infrastructure definition
-├── samconfig.toml                 # SAM deployment configuration (auto-generated)
+├── .gitignore
+├── amplify.yaml                                # AWS Amplify build configuration
+├── template.yaml                               # SAM/CloudFormation infrastructure definition
+├── LICENSE
 ├── README.md
+├── Digit_Classifier_ML_Model.ipynb             # Original MLP model notebook
+├── Digit_Classifier_ML_Model_Updated.ipynb     # Updated CNN model notebook
 │
-├── backend/                       # Lambda function package
-│   ├── app.py                     # Flask handler + ONNX inference logic
-│   ├── mnist_cnn.onnx             # Trained CNN model (ONNX format)
-│   ├── requirements.txt           # Python dependencies (onnxruntime, flask, etc.)
-│   └── onnxruntime/               # ONNX Runtime bundled for Lambda (x86_64)
+├── backend/                                    # Lambda function package
+│   ├── app.py                                  # Flask handler + ONNX inference logic
+│   ├── preprocess.py                           # Image preprocessing utilities
+│   ├── mnist_cnn.onnx                          # Trained CNN model (ONNX format)
+│   └── requirements.txt                        # Python dependencies
 │
-└── frontend/                      # Static site hosted on AWS Amplify
-    ├── index.html                 # Canvas UI for drawing/uploading digits
-    └── script.js                  # Fetch calls to API Gateway /predict endpoint
+├── frontend/                                   
+│   ├── index.html                              # Markdown
+│   ├── style.css                               # Stylesheet
+│   └── script.js                               # JavaScript
+│
+└── sample_handwritten_digits/                  # Sample test images
 
 ```
 <br>
 
-### **Security Considerations**
+## **Security Considerations**
 
 The following precautions have been taken to address common bad actor methods:<br>
 
 1. CORS + API URL:<br>
 
 Web application vulnerabilities stemming from exposed backend endpoints, reverse-engineering of client-side source code, and unrestricted cross-origin sharing represent critical vectors of attack for direct API abuse, data exfiltration, and unauthorised cross-domain exploitation.<br>
-API requests are routed through a proxy, keeping the backend endpoint out of client-side code. Cross-origin requests are restricted to the production frontend domain only. Please see [AWS CORS Documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html)<br>
+**Solution:** API requests are routed through a proxy, keeping the backend endpoint out of client-side code. Cross-origin requests are restricted to the production frontend domain only. Please see [AWS CORS Documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html)<br>
 <br>
 
 2. Error handling and debug mode:<br>
 
 Vulnerabilities resulting from verbose error leakage, stack trace exposure, and active debug interfaces could lead to system mapping and remote code execution.<br>
-Unhandled exceptions are logged server-side via CloudWatch without exposing internal details to the client. The application runs with debug mode disabled in all environments. Please see [AWS Prescriptive Logging Best Practices](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html)<br>
+**Solution:** Unhandled exceptions are logged server-side via CloudWatch without exposing internal details to the client. The application runs with debug mode disabled in all environments. Please see [AWS Prescriptive Logging Best Practices](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html)<br>
 <br>
 
 3. Input validation:<br>
 
 Vulnerabilities deriving from malicious file uploads and insecure canvas inputs expose web apps to system takeovers, data theft, and client-side code execution.<br>
-Uploaded files are validated against an allowlist of permitted image MIME types on both the frontend and backend. To prevent oversized input abuse and possible black hat probing via this method, payload size is capped at _MB (aha, did you expect me to reveal actual size? 😊 ). Please see [XSS (Cross Site Scripting)](https://owasp.org/www-community/attacks/xss/)<br>
+**Solution:** Uploaded files are validated against an allowlist of permitted image MIME types on both the frontend and backend. To prevent oversized input abuse and possible black hat probing via this method, payload size is capped at _MB (aha, did you expect me to reveal actual size? 😊 ). Please see [XSS (Cross Site Scripting)](https://owasp.org/www-community/attacks/xss/)<br>
 
 <br>
 
@@ -93,7 +112,7 @@ Enjoy further details by checking out:
       Original _Digit Classifier ML Model.ipynb_ notebook (deliberately left in repo) with detailed description of mini-project
       background and ML/NN engineering decisions.<br>
 
-  2. [Updated NN Model for this App](https://github.com/kea333/digit-recogniser-amplify-deploy/blob/main/Digit_Classifier_ML_Model_Updated.ipynb)
+  2. [Updated NN Model for this App](https://github.com/kea333/digit-recogniser-amplify-deploy/blob/main/Digit_Classifier_ML_Model_Updated.ipynb)<br>
       Updated notebook _Digit Classifier ML Model Updated.ipynb_ - a straighforward problem fix without too much talk. Detailed explanations may be added in due course.
 
   3. [App on Demonstration](https://main.d28bhzqcmfxh8w.amplifyapp.com/)<br>
