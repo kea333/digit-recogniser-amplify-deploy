@@ -45,7 +45,7 @@ __pycache__/
 *.pyd
 
 # --- Jupyter notebook checkpoints ---
-.ipynb_checkpoints/*.pth
+.ipynb_checkpoints/
 
 # --- .pth weight files ---
 *.pth
